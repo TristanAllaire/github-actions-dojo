@@ -58,6 +58,7 @@ jobs:
           APP_VERSION: ${{ github.sha }}
   inttests:
     name: Integ tests
+    needs: build
     runs-on: ubuntu-latest
     services:
       my-app:
