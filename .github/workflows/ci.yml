@@ -42,15 +42,14 @@ jobs:
     needs: unittests
     name: Build
     env:
-      env:
-        CONTAINER_REGISTRY: ghcr.io/tailzip/github-actions-dojo
-        CONTAINER_COMMIT_IMAGE: ghcr.io/tailzip/github-actions-dojo:${{ github.sha }}
-        CONTAINER_LATEST_IMAGE: ghcr.io/tailzip/github-actions-dojo:latest
+      CONTAINER_REGISTRY: ghcr.io/tristanallaire/github-actions-dojo
+      CONTAINER_COMMIT_IMAGE: ghcr.io/tristanallaire/github-actions-dojo:${{ github.sha }}
+      CONTAINER_LATEST_IMAGE: ghcr.io/tristanallaire/github-actions-dojo:latest
     steps:
       - uses: actions/checkout@v2
       - name: Build and push Docker image
         run: |
-          echo $PAT | docker login ghcr.io -u tailzip --password-stdin
+          echo $PAT | docker login ghcr.io -u tristanallaire --password-stdin
           docker build --build-arg APP_VERSION="$APP_VERSION" -t $CONTAINER_COMMIT_IMAGE  -t $CONTAINER_LATEST_IMAGE .
           docker push $CONTAINER_COMMIT_IMAGE
           docker push $CONTAINER_LATEST_IMAGE
