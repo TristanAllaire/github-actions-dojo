@@ -8,7 +8,7 @@ jobs:
   SuperLinter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/super-linter@v3
+      - uses: github/super-linter@v3
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: main
