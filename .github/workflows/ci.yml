@@ -12,6 +12,7 @@ on:
 
 jobs:
   Pylint:
+    runs-on: python:alpine
     steps:
       - uses: actions/super-linter@v3
         env:
@@ -21,6 +22,7 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pylint app.py
   StaticCodeAnalysisTests:
+    runs-on: python:alpine
     steps:
       - uses: actions/setup-python@v2
         with:
