@@ -7,6 +7,7 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    name: Lint
     steps:
       - uses: actions/checkout@v2
       - uses: github/super-linter@v3
@@ -17,6 +18,7 @@ jobs:
   sast:
     runs-on: ubuntu-latest
     needs: lint
+    name: Static Code Analysis Tests
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -25,8 +27,9 @@ jobs:
       - run: pip install -r requirements.txt
       - run: bandit app.py
   unittests:
-    runs-on: sast
+    runs-on: ubuntu-latest
     needs: sast
+    name: Unit Tests
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -34,3 +37,27 @@ jobs:
           python-version: '3.x'
       - run: pip install -r requirements.txt
       - run: python -m pytest
+  build:
+    runs-on: gcr.io/kaniko-project/executor:debug
+    needs: unittests
+    steps:
+      - uses: actions/checkout@v2
+      - run: test -z "$DOCKER_CONFIG" && export DOCKER_CONFIG=/kaniko/.docker
+      - run: |
+              cat > "${DOCKER_CONFIG}/config.json" <<EOF
+              {
+                "auths": {
+                  "${CI_REGISTRY}": {
+                    "username": "gitlab-ci-token",
+                    "password": "${CI_JOB_TOKEN}"
+                  }
+                }
+              }
+              EOF
+      - run: >-
+              /kaniko/executor
+              --context "${CI_PROJECT_DIR}"
+              --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+              --build-arg APP_VERSION="${CI_COMMIT_SHORT_SHA}"
+              --destination "${CONTAINER_COMMIT_IMAGE}"
+              --destination "${CONTAINER_LATEST_IMAGE}"
