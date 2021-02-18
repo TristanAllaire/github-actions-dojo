@@ -73,6 +73,6 @@ jobs:
       - uses: actions/setup-node@v1
       - run: npm install -g bats
       - run: bats -v
-      - run: gitlab-ci-scripts/test_bats.sh
+      - run: gitlab-actions-scripts/test_bats.sh
     
 
