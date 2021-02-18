@@ -6,7 +6,6 @@ on:
 
 jobs:
   SuperLinter:
-    syntax:
     steps:
       - uses: actions/super-linter@v3
         env:
