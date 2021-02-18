@@ -56,3 +56,22 @@ jobs:
         env:
           PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           APP_VERSION: ${{ github.sha }}
+  inttests:
+    name: Integ tests
+    runs-on: ubuntu-latest
+    services:
+      my-app:
+        image: ghcr.io/tristanallaire/github-actions-dojo:${{ github.sha }}
+        credentials: 
+          username: tristanallaire
+          password: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        ports: 
+          - "8000:8000"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: npm install -g bats
+      - run: bats -v
+      - run: gitlab-ci-scripts/test_bats.sh
+    
+
